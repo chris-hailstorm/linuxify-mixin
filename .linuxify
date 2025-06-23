@@ -1,0 +1,121 @@
+##
+## Linuxify PATH and Environment Configuration
+##
+## This file configures PATH, MANPATH, and other environment variables
+## to prioritize GNU/Linux utilities over macOS BSD utilities.
+##
+## Coordinate changes between "linuxify" and ".linuxify" files:
+## - Tools in $(brew --prefix)/bin need no additional PATH entry
+## - Tools elsewhere require PATH entry below
+##
+## Environment variables are handled additively to avoid conflicts
+##
+
+BREW_HOME=$(brew --prefix)
+
+##############################################################################
+# HOMEBREW OPTIMIZATION
+##############################################################################
+
+# Optimize Homebrew operations in projects using linuxify
+# Note: Set these globally in ~/.zshrc if desired as default behavior
+export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_INSTALL_CLEANUP=1
+
+##############################################################################
+# CORE PATH CONFIGURATION
+##############################################################################
+
+# Primary Homebrew paths (highest priority for most tools)
+export PATH="${BREW_HOME}/bin:$PATH"
+export MANPATH="${BREW_HOME}/share/man:${MANPATH:-}"
+export INFOPATH="${BREW_HOME}/share/info:${INFOPATH:-}"
+
+##############################################################################
+# GNU-SPECIFIC TOOL PATHS
+##############################################################################
+
+# coreutils - 100+ core utilities (cat, cp, date, ls, etc.)
+export PATH="${BREW_HOME}/opt/coreutils/libexec/gnubin:$PATH"
+export MANPATH="${BREW_HOME}/opt/coreutils/libexec/gnuman:${MANPATH:-}"
+
+# make - GNU make
+export PATH="${BREW_HOME}/opt/make/libexec/gnubin:$PATH"
+export MANPATH="${BREW_HOME}/opt/make/libexec/gnuman:${MANPATH:-}"
+
+# m4 - GNU M4 macro processor
+export PATH="${BREW_HOME}/opt/m4/bin:$PATH"
+
+# file-formula - GNU file command
+export PATH="${BREW_HOME}/opt/file-formula/bin:$PATH"
+
+# unzip - GNU unzip
+export PATH="${BREW_HOME}/opt/unzip/bin:$PATH"
+
+# ed - GNU line editor
+export PATH="${BREW_HOME}/opt/ed/libexec/gnubin:$PATH"
+
+# findutils - GNU find, xargs, locate
+export PATH="${BREW_HOME}/opt/findutils/libexec/gnubin:$PATH"
+
+# gnu-indent - GNU indent
+export PATH="${BREW_HOME}/opt/gnu-indent/libexec/gnubin:$PATH"
+
+# gnu-sed - GNU sed
+export PATH="${BREW_HOME}/opt/gnu-sed/libexec/gnubin:$PATH"
+
+# gnu-tar - GNU tar
+export PATH="${BREW_HOME}/opt/gnu-tar/libexec/gnubin:$PATH"
+
+# gnu-which - GNU which
+export PATH="${BREW_HOME}/opt/gnu-which/libexec/gnubin:$PATH"
+
+# grep - GNU grep
+export PATH="${BREW_HOME}/opt/grep/libexec/gnubin:$PATH"
+
+# curl - Updated curl
+export PATH="${BREW_HOME}/opt/curl/bin:$PATH"
+
+##############################################################################
+# DATABASE AND DEVELOPMENT TOOLS
+##############################################################################
+
+# libpq - PostgreSQL client tools (psql, pg_dump, etc.)
+export PATH="${BREW_HOME}/opt/libpq/bin:$PATH"
+
+##############################################################################
+# COMPILER AND BUILD TOOLS
+##############################################################################
+
+# flex - Fast lexical analyzer generator
+export PATH="${BREW_HOME}/opt/flex/bin:$PATH"
+export LDFLAGS="${LDFLAGS:-} -L${BREW_HOME}/opt/flex/lib"
+export CPPFLAGS="${CPPFLAGS:-} -I${BREW_HOME}/opt/flex/include"
+
+# bison - GNU parser generator
+export PATH="${BREW_HOME}/opt/bison/bin:$PATH"
+export LDFLAGS="${LDFLAGS:-} -L${BREW_HOME}/opt/bison/lib"
+
+# libressl - LibreSSL (OpenSSL alternative)
+export PATH="${BREW_HOME}/opt/libressl/bin:$PATH"
+export LDFLAGS="${LDFLAGS:-} -L${BREW_HOME}/opt/libressl/lib"
+export CPPFLAGS="${CPPFLAGS:-} -I${BREW_HOME}/opt/libressl/include"
+export PKG_CONFIG_PATH="${BREW_HOME}/opt/libressl/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+
+##############################################################################
+# OPTIONAL DEVELOPMENT TOOLS
+##############################################################################
+
+# Rancher Desktop - Docker/Kubernetes development
+# Note: This is NOT installed by the main "linuxify" script
+# Users install Rancher Desktop separately, but PATH is configured here
+if [[ -d "${HOME}/.rd/bin" ]]; then
+    export PATH="${HOME}/.rd/bin:$PATH"
+fi
+
+##############################################################################
+# CLEANUP
+##############################################################################
+
+# Clean up temporary variables
+unset BREW_HOME
