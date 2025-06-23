@@ -364,7 +364,7 @@ The `linuxify-mixin` mixin works seamlessly with other development environment m
 
 `asdf-direnv-mixin` and `linuxify-mixin` both contribute to standardizing tools and versions in the MacOS environment, although different sets of tools. `linuxify-mixin` focuses on general system utilities like `git` or `grep` that can usually be used with any project and no specific version requirement other than "pretty recent". `asdf-direnv-mixin` focuses on programming tools like `python` and `node`, and also more general tools that are often used in scripts and Makefiles like `jq` and `awscli`.
 
-When `linuxify-mixin` is used with the `asdf-direnv-mixin`:
+When `linuxify-mixin` is used with `asdf-direnv-mixin`:
 
 * **Automatic configuration**: No manual .envrc configuration needed
 * **Proper precedence**: ASDF versions → GNU tools → System tools
