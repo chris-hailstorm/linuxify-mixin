@@ -405,4 +405,4 @@ When updating this consolidated version:
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License - see the LICENSE file for details.
