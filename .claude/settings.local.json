@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(brew info:*)"
+      "Bash(brew info:*)",
+      "Bash(/opt/homebrew/opt/coreutils/libexec/gnubin/ls:*)"
     ],
     "deny": [],
     "ask": []
