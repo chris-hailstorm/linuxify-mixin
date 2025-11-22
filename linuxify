@@ -3,33 +3,31 @@ set -euo pipefail
 
 ##
 ## Linuxify - Comprehensive GNU/Linux utilities for macOS
-##
+## 
 ## Supports both standalone and embedded operation modes:
-## - Standalone: ~/linuxify/ (global system integration)
-## - Embedded: */scripts/linuxify/ (project-specific integration)
+## - Standalone: ~/linuxify-mixin/ (global system integration)
+## - Embedded: */scripts/linuxify-mixin/ (project-specific integration)
 ##
 ## Coordinate changes between "linuxify" and ".linuxify" files
 ## - Tools in $(brew --prefix)/bin need no additional PATH entry
 ## - Tools elsewhere require PATH entry in .linuxify file
 ##
 
-CPU_BRAND_STRING="$(sysctl -a | /usr/bin/awk '/machdep.cpu.brand_string/{print $2}')"
-export CPU_BRAND_STRING
+export CPU_BRAND_STRING="$(sysctl -a | /usr/bin/awk '/machdep.cpu.brand_string/{print $2}')"
 
 # Detect operation mode
 linuxify_detect_mode() {
-    local current_dir
-    current_dir="$(pwd)"
-
-    if [[ "$current_dir" == "$HOME/linuxify" ]]; then
+    local current_dir="$(pwd)"
+    
+    if [[ "$current_dir" == "$HOME/linuxify-mixin" ]]; then
         export LINUXIFY_MODE="standalone"
-        echo "🏠 Standalone mode detected"
-    elif [[ "$current_dir" =~ .*/scripts/linuxify$ ]]; then
+        echo "🏠 Global / standalone mode detected"
+    elif [[ "$current_dir" =~ .*/scripts/linuxify-mixin$ ]]; then
         export LINUXIFY_MODE="embedded"
-        echo "📦 Embedded mode detected"
+        echo "📦 Project / embedded mode detected"
     else
         echo "⚠️  Running from non-standard location: $current_dir"
-        echo "    Expected: ~/linuxify/ or */scripts/linuxify/"
+        echo "    Expected: ~/linuxify-mixin/ or */scripts/linuxify-mixin/"
         export LINUXIFY_MODE="unknown"
     fi
 }
@@ -37,10 +35,10 @@ linuxify_detect_mode() {
 linuxify_check_git_safety() {
     if [[ "$LINUXIFY_MODE" == "embedded" ]]; then
         if [[ -d ".git" ]]; then
-            echo "❌ FATAL: .git folder detected in embedded linuxify"
+            echo "❌ FATAL: .git folder detected in embedded linuxify-mixin"
             echo "   This will cause git-within-git problems for your project"
-            echo "   Solution: rm -rf scripts/linuxify/.git"
-            echo "   Use 'rsync -av --exclude=.git' when copying mix-ins"
+            echo "   Solution: rm -rf scripts/linuxify-mixin/.git"
+            echo "   Use 'rsync -av --exclude=.git' when copying mixins"
             exit 1
         fi
     fi
@@ -62,8 +60,7 @@ linuxify_check_brew() {
 }
 
 linuxify_set_prefix() {
-    BREW_PREFIX="$(brew --prefix)"
-    export BREW_PREFIX
+    export BREW_PREFIX="$(brew --prefix)"
     echo "🍺 Using Homebrew at: $BREW_PREFIX"
 }
 
@@ -91,7 +88,7 @@ linuxify_formulas=(
     "grep"           # Pattern matching with extended features
     "gawk"           # GNU AWK with more functions
     "make"           # Build automation with GNU extensions
-
+    
     # === TEXT PROCESSING & DEVELOPMENT ===
     "gnu-indent"     # C code formatter
     "wdiff"          # Word-based diff
@@ -100,12 +97,11 @@ linuxify_formulas=(
     "nano"           # Text editor
     "vim"            # Enhanced text editor
     "emacs"          # Text editor
-
+    
     # === COMPRESSION & ARCHIVES ===
     "gzip"           # Compression utility
     "unzip"          # Archive extraction
-    "sharutils"      # Shell archive utilities (shar, unshar)
-
+    
     # === BUILD & COMPILATION TOOLS ===
     "autoconf"       # Automatic configure script builder
     "m4"             # Macro processor
@@ -113,25 +109,13 @@ linuxify_formulas=(
     "flex"           # Fast lexical analyzer
     "binutils"       # Binary utilities
     "gpatch"         # Apply patches
-
-    # === SYSTEM LIBRARIES ===
-    # Common libraries needed for building/linking software
-    # Important for asdf / Python support
-    "openssl@3"      # Cryptography and SSL/TLS toolkit
-    "readline"       # Command line editing library
-    "sqlite"         # Embedded SQL database engine
-    "xz"             # XZ and LZMA compression library
-    "zlib"           # General-purpose compression library
-    "bzip2"          # Block-sorting compression library
-    "libffi"         # Foreign function interface library
-    "tcl-tk"         # Tool Command Language and Tk GUI toolkit
-
+    
     # === NETWORK & DOWNLOAD TOOLS ===
     "wget"           # Network downloader
     "curl"           # Enhanced HTTP client
     "nmap"           # Network scanning and discovery
     "openssh"        # Secure shell
-
+    
     # === SYSTEM UTILITIES ===
     "watch"          # Execute program periodically
     "screen"         # Terminal multiplexer
@@ -140,20 +124,20 @@ linuxify_formulas=(
     "bash"           # GNU Bourne-Again Shell
     "perl"           # Programming language
     "rsync"          # File synchronization
-
+    
     # === SECURITY & CRYPTO ===
     "gpg"            # GNU Privacy Guard
     "libressl"       # OpenSSL alternative
-
+    
     # === VERSION CONTROL & DEVELOPMENT ===
     "git"            # Version control
     "gh"             # GitHub CLI
-
+    
     # === DATABASE & FORMATTING TOOLS ===
     "libpq"          # PostgreSQL client tools
     "pgformatter"    # PostgreSQL formatter (no asdf option available)
     "sqlfluff"       # SQL linter and formatter
-
+    
     # === CONTAINER & MONITORING ===
     "ctop"           # Container monitoring
 )
@@ -168,7 +152,7 @@ linuxify_install_gdb() {
         echo "🔧 Installing gdb (Intel Mac only)"
         brew install gdb
     fi
-
+    
     # gdb requires special privileges to access Mach ports
     # Declare 'set startup-with-shell off' in ~/.gdbinit
     if ! grep -qF 'set startup-with-shell off' ~/.gdbinit 2>/dev/null; then
@@ -179,7 +163,7 @@ linuxify_install_gdb() {
 
 linuxify_install_formulas() {
     local formulas=("$@")
-
+    
     for formula in "${formulas[@]}"; do
         if brew ls --versions "$formula" >/dev/null 2>&1; then
             echo "✅ Found existing: $formula"
@@ -191,8 +175,8 @@ linuxify_install_formulas() {
 }
 
 linuxify_install() {
-    echo "🚀 Starting linuxify installation..."
-
+    echo "🚀 Starting linuxify-mixin installation..."
+    
     linuxify_detect_mode
     linuxify_check_git_safety
     linuxify_check_os
@@ -207,22 +191,21 @@ linuxify_install() {
     if [[ "$CPU_BRAND_STRING" != 'Apple' ]]; then
         echo "💻 Installing Intel-specific tools..."
         linuxify_install_gdb
-    else
-        echo "🍎 Skipping Intel-specific tools on Apple Silicon"
     fi
 
     # Configure based on operation mode
     case "$LINUXIFY_MODE" in
         "standalone")
-            echo "🏠 Configuring for standalone mode..."
+            echo "🏠 Configuring for global / standalone mode..."
             cp .linuxify ~/.linuxify
             echo "✅ Copied .linuxify to ~/.linuxify for global shell integration"
-            echo "   Add '. ~/.linuxify' to your ~/.zshrc and ~/.bashrc"
+            echo "➡️ Add 'source ~/.linuxify' to your ~/.zshrc and ~/.bashrc"
             ;;
         "embedded")
-            echo "📦 Configuring for embedded mode..."
+            echo "📦 Configuring for project / embedded mode..."
             echo "✅ Using local .linuxify file for project integration"
-            echo "   Your .envrc should source this file via direnv"
+            echo "➡️ Your .envrc needs to source this file via direnv"
+            echo "➡️ If you use asdf-direnv, that is already handled"
             ;;
         *)
             echo "⚠️  Unknown mode - creating local configuration only"
@@ -234,8 +217,8 @@ linuxify_install() {
 }
 
 linuxify_uninstall() {
-    echo "🗑️  Starting linuxify uninstall..."
-
+    echo "🗑️  Starting linuxify-mixin uninstall..."
+    
     linuxify_check_os
     linuxify_check_brew
     linuxify_set_prefix
@@ -248,7 +231,7 @@ linuxify_uninstall() {
 
     # Start with main formulas
     local all_formulas=("${linuxify_formulas[@]}")
-
+    
     # Add Intel formulas if applicable
     if [[ "$CPU_BRAND_STRING" != 'Apple' ]]; then
         all_formulas+=("${linuxify_intel_formulas[@]}")
@@ -280,23 +263,23 @@ linuxify_uninstall() {
     rm -f ~/.linuxify
     echo "✅ Removed ~/.linuxify"
     echo "   Remove '. ~/.linuxify' from your shell config files"
-
+    
     echo "🎉 Linuxify uninstall complete!"
 }
 
 linuxify_info() {
     linuxify_check_os
     linuxify_check_brew
-
+    
     local all_formulas=("${linuxify_formulas[@]}")
-
+    
     if [[ "$CPU_BRAND_STRING" != 'Apple' ]]; then
         all_formulas+=("${linuxify_intel_formulas[@]}")
     fi
 
     echo "📊 Linuxify Tool Information"
     echo "=========================="
-
+    
     for formula in "${all_formulas[@]}"; do
         echo "📦 $formula"
         brew info "$formula" 2>/dev/null || echo "   Not available"
@@ -313,13 +296,13 @@ USAGE:
 
 COMMANDS:
     install      Install GNU/Linux utilities
-    uninstall    Remove GNU/Linux utilities
+    uninstall    Remove GNU/Linux utilities  
     info         Show information about utilities
     help, -h     Show this help message
 
 OPERATION MODES:
-    Standalone   ~/linuxify/ - Global system integration
-    Embedded     */scripts/linuxify/ - Project-specific integration
+    Standalone   ~/linuxify-mixin/ - Global system integration
+    Embedded     */scripts/linuxify-mixin/ - Project-specific
 
 EXAMPLES:
     ./linuxify install      # Install all utilities

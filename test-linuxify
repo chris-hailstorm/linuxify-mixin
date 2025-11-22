@@ -144,7 +144,6 @@ echo ""
 echo "=== COMPRESSION & ARCHIVES ==="
 test_command "gzip" true "gzip"
 test_command "unzip" false "unzip"
-test_command "shar" false "sharutils"
 echo ""
 
 echo "=== BUILD & COMPILATION TOOLS ==="

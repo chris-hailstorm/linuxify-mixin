@@ -198,7 +198,6 @@ date --version   # Should show GNU coreutils
 
 * `gzip` - Compression utility
 * `unzip` - Archive extraction
-* `sharutils` - Shell archive (shar, uue)
 
 **Build & compilation tools:**
 
