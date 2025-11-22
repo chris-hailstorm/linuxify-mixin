@@ -77,6 +77,12 @@ export PATH="${BREW_HOME}/opt/gnu-which/libexec/gnubin:$PATH"
 # grep - GNU grep
 export PATH="${BREW_HOME}/opt/grep/libexec/gnubin:$PATH"
 
+# gawk - GNU AWK
+export PATH="${BREW_HOME}/opt/gawk/libexec/gnubin:$PATH"
+
+# gpatch - GNU patch
+export PATH="${BREW_HOME}/opt/gpatch/libexec/gnubin:$PATH"
+
 # curl - Updated curl
 export PATH="${BREW_HOME}/opt/curl/bin:$PATH"
 

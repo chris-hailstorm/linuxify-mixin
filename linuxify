@@ -137,9 +137,21 @@ linuxify_formulas=(
     "libpq"          # PostgreSQL client tools
     "pgformatter"    # PostgreSQL formatter (no asdf option available)
     "sqlfluff"       # SQL linter and formatter
-    
+
     # === CONTAINER & MONITORING ===
     "ctop"           # Container monitoring
+
+    # === SYSTEM LIBRARIES ===
+    # Common libraries needed for building/linking software
+    # Important for asdf / Python support
+    "openssl@3"      # Cryptography and SSL/TLS toolkit
+    "readline"       # Command line editing library
+    "sqlite"         # Embedded SQL database engine
+    "xz"             # XZ and LZMA compression library
+    "zlib"           # General-purpose compression library
+    "bzip2"          # Block-sorting compression library
+    "libffi"         # Foreign function interface library
+    "tcl-tk"         # Tool Command Language and Tk GUI toolkit
 )
 
 # Intel-only tools

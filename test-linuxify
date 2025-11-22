@@ -83,9 +83,9 @@ test_command() {
     # Check for GNU version if requested
     if [[ "$check_gnu" == "true" ]]; then
         local version_output
-        version_output=$("$cmd" --version 2>&1 | head -1 || echo "")
+        version_output=$("$cmd" --version 2>&1 | head -5 || echo "")
 
-        if echo "$version_output" | grep -qi "GNU"; then
+        if echo "$version_output" | grep -qi "GNU\|Free Software Foundation"; then
             echo -e "${GREEN}✓${NC} $cmd - GNU version [$description]"
             ((PASS++))
         else
