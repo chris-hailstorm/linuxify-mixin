@@ -213,7 +213,7 @@ linuxify_install() {
     esac
 
     echo "🎉 Linuxify installation complete!"
-    echo "   Installed ${#linuxify_formulas[@]} GNU/Linux tools"
+    echo "ℹ️  Installed ${#linuxify_formulas[@]} GNU/Linux tools"
 }
 
 linuxify_uninstall() {
