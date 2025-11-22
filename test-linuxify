@@ -181,7 +181,7 @@ echo ""
 
 echo "=== SYSTEM UTILITIES ==="
 test_command "watch" false "watch"
-test_command "screen" true "screen"
+test_command "screen" false "screen"  # GNU tool but doesn't advertise in --version
 test_command "tree" false "tree"
 test_command "file" false "file-formula"
 test_command "bash" true "bash"
