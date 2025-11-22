@@ -1,3 +1,7 @@
+#!/usr/bin/env bash
+# This file is meant to be sourced, not executed directly
+# Source it in your shell: source ~/.linuxify or . ~/.linuxify
+
 ##
 ## Linuxify PATH and Environment Configuration
 ##
@@ -101,6 +105,54 @@ export PATH="${BREW_HOME}/opt/libressl/bin:$PATH"
 export LDFLAGS="${LDFLAGS:-} -L${BREW_HOME}/opt/libressl/lib"
 export CPPFLAGS="${CPPFLAGS:-} -I${BREW_HOME}/opt/libressl/include"
 export PKG_CONFIG_PATH="${BREW_HOME}/opt/libressl/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+
+##############################################################################
+# SYSTEM LIBRARIES (important for asdf / Python support)
+##############################################################################
+
+# openssl@3 - Cryptography and SSL/TLS toolkit
+export PATH="${BREW_HOME}/opt/openssl@3/bin:$PATH"
+export LDFLAGS="${LDFLAGS:-} -L${BREW_HOME}/opt/openssl@3/lib"
+export CPPFLAGS="${CPPFLAGS:-} -I${BREW_HOME}/opt/openssl@3/include"
+export PKG_CONFIG_PATH="${BREW_HOME}/opt/openssl@3/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+
+# readline - Command line editing library
+export LDFLAGS="${LDFLAGS:-} -L${BREW_HOME}/opt/readline/lib"
+export CPPFLAGS="${CPPFLAGS:-} -I${BREW_HOME}/opt/readline/include"
+export PKG_CONFIG_PATH="${BREW_HOME}/opt/readline/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+
+# sqlite - Embedded SQL database engine
+export PATH="${BREW_HOME}/opt/sqlite/bin:$PATH"
+export LDFLAGS="${LDFLAGS:-} -L${BREW_HOME}/opt/sqlite/lib"
+export CPPFLAGS="${CPPFLAGS:-} -I${BREW_HOME}/opt/sqlite/include"
+export PKG_CONFIG_PATH="${BREW_HOME}/opt/sqlite/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+
+# xz - XZ and LZMA compression library
+export LDFLAGS="${LDFLAGS:-} -L${BREW_HOME}/opt/xz/lib"
+export CPPFLAGS="${CPPFLAGS:-} -I${BREW_HOME}/opt/xz/include"
+export PKG_CONFIG_PATH="${BREW_HOME}/opt/xz/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+
+# zlib - General-purpose compression library
+export LDFLAGS="${LDFLAGS:-} -L${BREW_HOME}/opt/zlib/lib"
+export CPPFLAGS="${CPPFLAGS:-} -I${BREW_HOME}/opt/zlib/include"
+export PKG_CONFIG_PATH="${BREW_HOME}/opt/zlib/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+
+# bzip2 - Block-sorting compression library
+export PATH="${BREW_HOME}/opt/bzip2/bin:$PATH"
+export LDFLAGS="${LDFLAGS:-} -L${BREW_HOME}/opt/bzip2/lib"
+export CPPFLAGS="${CPPFLAGS:-} -I${BREW_HOME}/opt/bzip2/include"
+export PKG_CONFIG_PATH="${BREW_HOME}/opt/bzip2/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+
+# libffi - Foreign function interface library
+export LDFLAGS="${LDFLAGS:-} -L${BREW_HOME}/opt/libffi/lib"
+export CPPFLAGS="${CPPFLAGS:-} -I${BREW_HOME}/opt/libffi/include"
+export PKG_CONFIG_PATH="${BREW_HOME}/opt/libffi/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+
+# tcl-tk - Tool Command Language and Tk GUI toolkit
+export PATH="${BREW_HOME}/opt/tcl-tk/bin:$PATH"
+export LDFLAGS="${LDFLAGS:-} -L${BREW_HOME}/opt/tcl-tk/lib"
+export CPPFLAGS="${CPPFLAGS:-} -I${BREW_HOME}/opt/tcl-tk/include"
+export PKG_CONFIG_PATH="${BREW_HOME}/opt/tcl-tk/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
 
 ##############################################################################
 # OPTIONAL DEVELOPMENT TOOLS

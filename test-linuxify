@@ -1,0 +1,226 @@
+#!/usr/bin/env bash
+
+#
+# Test script for linuxify installation
+# Verifies that GNU/Linux utilities are properly installed and take precedence
+#
+
+# Note: No 'set -e' so we can run all tests and report summary
+set -uo pipefail
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Counters
+PASS=0
+FAIL=0
+SKIP=0
+
+# Get Homebrew prefix
+BREW_PREFIX="$(brew --prefix)"
+
+# Print summary and exit with appropriate code
+print_summary() {
+    echo ""
+    echo "=========================================="
+    echo "Test Summary"
+    echo "=========================================="
+    echo -e "${GREEN}Passed:${NC} $PASS"
+    echo -e "${RED}Failed:${NC} $FAIL"
+    if [[ $SKIP -gt 0 ]]; then
+        echo -e "${YELLOW}Skipped:${NC} $SKIP"
+    fi
+    echo ""
+
+    if [[ $FAIL -eq 0 ]]; then
+        echo -e "${GREEN}✓ All tests passed!${NC}"
+        exit 0
+    else
+        echo -e "${RED}✗ Some tests failed. Please check the output above.${NC}"
+        echo ""
+        echo "Common issues:"
+        echo "  - If GNU tools are not found, make sure ~/.linuxify is sourced"
+        echo "  - Open a new terminal session to pick up PATH changes"
+        echo "  - Run './linuxify install' if tools are missing"
+        exit 1
+    fi
+}
+
+# Ensure summary is always printed
+trap print_summary EXIT
+
+echo "=========================================="
+echo "Testing linuxify installation"
+echo "=========================================="
+echo ""
+
+# Helper function to test if a command exists and optionally check for GNU version
+test_command() {
+    local cmd="$1"
+    local check_gnu="${2:-false}"
+    local description="$3"
+
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo -e "${RED}✗${NC} $cmd - NOT FOUND"
+        ((FAIL++))
+        return 0
+    fi
+
+    local cmd_path
+    cmd_path="$(which "$cmd")"
+
+    # Check if it's the Homebrew version
+    if [[ "$cmd_path" != "$BREW_PREFIX"* ]] && [[ "$cmd_path" != "/opt/homebrew"* ]]; then
+        echo -e "${YELLOW}⚠${NC} $cmd - FOUND but not Homebrew version: $cmd_path"
+        ((FAIL++))
+        return 0
+    fi
+
+    # Check for GNU version if requested
+    if [[ "$check_gnu" == "true" ]]; then
+        local version_output
+        version_output=$("$cmd" --version 2>&1 | head -1 || echo "")
+
+        if echo "$version_output" | grep -qi "GNU"; then
+            echo -e "${GREEN}✓${NC} $cmd - GNU version [$description]"
+            ((PASS++))
+        else
+            echo -e "${RED}✗${NC} $cmd - NOT GNU version: $version_output"
+            ((FAIL++))
+        fi
+    else
+        echo -e "${GREEN}✓${NC} $cmd - Homebrew version [$description]"
+        ((PASS++))
+    fi
+    return 0
+}
+
+# Helper function to test if a library is installed via Homebrew
+test_library() {
+    local formula="$1"
+    local description="$2"
+
+    if brew list "$formula" >/dev/null 2>&1; then
+        echo -e "${GREEN}✓${NC} $formula - installed [$description]"
+        ((PASS++))
+    else
+        echo -e "${RED}✗${NC} $formula - NOT installed"
+        ((FAIL++))
+    fi
+    return 0
+}
+
+echo "=== CORE GNU UTILITIES ==="
+test_command "ls" true "coreutils"
+test_command "cat" true "coreutils"
+test_command "cp" true "coreutils"
+test_command "mv" true "coreutils"
+test_command "date" true "coreutils"
+test_command "find" true "findutils"
+test_command "xargs" true "findutils"
+test_command "diff" true "diffutils"
+test_command "sed" true "gnu-sed"
+test_command "tar" true "gnu-tar"
+test_command "which" true "gnu-which"
+test_command "grep" true "grep"
+test_command "awk" true "gawk"
+test_command "make" true "make"
+echo ""
+
+echo "=== TEXT PROCESSING & DEVELOPMENT ==="
+test_command "indent" true "gnu-indent"
+test_command "wdiff" true "wdiff"
+test_command "ed" true "ed"
+test_command "less" false "less"
+test_command "nano" false "nano"
+test_command "vim" false "vim"
+test_command "emacs" false "emacs"
+echo ""
+
+echo "=== COMPRESSION & ARCHIVES ==="
+test_command "gzip" true "gzip"
+test_command "unzip" false "unzip"
+test_command "shar" false "sharutils"
+echo ""
+
+echo "=== BUILD & COMPILATION TOOLS ==="
+test_command "autoconf" true "autoconf"
+test_command "m4" true "m4"
+test_command "bison" true "bison"
+test_command "flex" false "flex"
+test_command "patch" true "gpatch"
+# binutils provides various tools
+if command -v addr2line >/dev/null 2>&1; then
+    test_command "addr2line" false "binutils"
+else
+    echo -e "${BLUE}ℹ${NC} binutils - installed (library-only on macOS)"
+    ((PASS++))
+fi
+echo ""
+
+echo "=== SYSTEM LIBRARIES ==="
+test_library "openssl@3" "cryptography"
+test_library "readline" "command line editing"
+test_library "sqlite" "SQL database"
+test_library "xz" "compression library"
+test_library "zlib" "compression library"
+test_library "bzip2" "compression library"
+test_library "libffi" "FFI library"
+test_library "tcl-tk" "Tcl/Tk"
+echo ""
+
+echo "=== NETWORK & DOWNLOAD TOOLS ==="
+test_command "wget" true "wget"
+test_command "curl" false "curl"
+test_command "nmap" false "nmap"
+test_command "ssh" false "openssh"
+echo ""
+
+echo "=== SYSTEM UTILITIES ==="
+test_command "watch" false "watch"
+test_command "screen" true "screen"
+test_command "tree" false "tree"
+test_command "file" false "file-formula"
+test_command "bash" true "bash"
+test_command "perl" false "perl"
+test_command "rsync" false "rsync"
+echo ""
+
+echo "=== SECURITY & CRYPTO ==="
+test_command "gpg" true "gpg"
+if command -v libressl >/dev/null 2>&1; then
+    test_command "libressl" false "libressl"
+else
+    # LibreSSL may be library-only
+    test_library "libressl" "OpenSSL alternative"
+fi
+echo ""
+
+echo "=== VERSION CONTROL & DEVELOPMENT ==="
+test_command "git" false "git"
+test_command "gh" false "GitHub CLI"
+echo ""
+
+echo "=== DATABASE & FORMATTING TOOLS ==="
+test_command "psql" false "libpq"
+test_command "pg_format" false "pgformatter"
+test_command "sqlfluff" false "sqlfluff"
+echo ""
+
+echo "=== CONTAINER & MONITORING ==="
+test_command "ctop" false "ctop"
+echo ""
+
+# Intel-only tools
+CPU_BRAND_STRING="$(sysctl -a 2>/dev/null | /usr/bin/awk '/machdep.cpu.brand_string/{print $2}')"
+if [[ "$CPU_BRAND_STRING" != 'Apple' ]]; then
+    echo "=== INTEL-SPECIFIC TOOLS ==="
+    test_command "gdb" true "gdb"
+    echo ""
+fi
+
+# Summary will be printed by trap on EXIT
