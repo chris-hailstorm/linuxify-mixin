@@ -120,6 +120,16 @@ Even if you use `zsh`, this is needed in `~/.bashrc` to support scripts that spe
 
 4. **Open new terminal** to activate
 
+**Alternative: Modular zshrc approach**
+
+If you use a modular `~/.zshrc.d/` setup, you can use the provided auto-updating module instead:
+
+```sh
+cp support-files/.zshrc.d/050_linuxify.sh ~/.zshrc.d/
+```
+
+This module will automatically clone, update, and source linuxify on every new shell session. See `support-files/.zshrc.d/050_linuxify.sh` for details.
+
 &nbsp;
 
 ### Project / embedded installation
