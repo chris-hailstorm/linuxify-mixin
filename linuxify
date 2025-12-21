@@ -124,6 +124,8 @@ linuxify_formulas=(
     "bash"           # GNU Bourne-Again Shell
     "perl"           # Programming language
     "rsync"          # File synchronization
+    "bash-completion"
+    "zsh-completions"
     
     # === SECURITY & CRYPTO ===
     "gpg"            # GNU Privacy Guard
