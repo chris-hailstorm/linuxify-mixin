@@ -2,7 +2,7 @@
 
 > Replaces BSD utilities with portable GNU utilities
 
-A comprehensive collection of GNU/Linux utilities that replaces MacOS/BSD utilities with their GNU equivalents, so that commands in MacOS (dev machines) will have the same behavior as in Linux (Docker containers). This ensures portability and correctness of shell scripts and Makefiles.
+A comprehensive collection of GNU/Linux utilities that replaces MacOS/BSD utilities with their GNU equivalents, so that commands in MacOS (dev machines) will have the same behavior as in Linux (Docker containers and EC2 boxes). This ensures portability and correctness of shell scripts and Makefiles.
 
 > **📋 Note**: When copying this repo to your project's `scripts/linuxify/` directory, use `rsync -av --exclude='.git'` to avoid git-within-git problems. This ensures clean project integration without nested git repos. See the [Installation section](#installation) below for more details.
 
@@ -80,9 +80,9 @@ For **project-specific** integration within repositories:
 
 * **macOS** (Apple Silicon or Intel)
 * **Homebrew** installed from [brew.sh](https://brew.sh)
-* **zsh** shell (standard on modern macOS)
-* **`direnv`** (optional, for project-specific integration)
-  * See the `asdf-direnv` repo for how to install `direnv`
+* **zsh** as your default shell (standard on modern macOS)
+* **`asdf`** and **`direnv`** (for automatic installation)
+  * See the `asdf-direnv` repo for how to install
 
 &nbsp;
 
